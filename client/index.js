@@ -9,12 +9,14 @@ function showTodos () {
     success: function (resp) {
       for (let i = 0; i < resp.length; i++) {
         let todo = resp[i]
+        let id = todo._id
+        console.log(typeof id)
         $('#add-todo').append(
           `<tr>
             <td>${i + 1}</td>
             <td>${todo.content}</td>
-            <td id="completed-${i + 1}">${todo.completed}</td>
-            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
+            <td>${todo.completed}</td>
+            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo('${id}',${todo.completed})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo('${id}')">Delete</button></td>
           </tr>`
         )
       }
@@ -25,23 +27,22 @@ function showTodos () {
   })
 }
 
-function updateTodo (i, id) {
-  let checkVal = $(`#completed-${i + 1}`).html()
-  console.log(checkVal)
+function updateTodo (id, completed) {
   $.ajax({
     type: 'PUT',
     url: `http://localhost:3000/update/${id}`,
-    data: {update: !checkVal},
+    data: {update: !completed},
     success: function (resp) {
       $('#add-todo').empty()
       for (let i = 0; i < resp.length; i++) {
         let todo = resp[i]
+        let id = todo._id
         $('#add-todo').append(
           `<tr>
             <td>${i + 1}</td>
             <td>${todo.content}</td>
-            <td id="completed-${i + 1}">${todo.completed}</td>
-            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
+            <td>${todo.completed}</td>
+            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo('${id}',${todo.completed})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo('${id}')">Delete</button></td>
           </tr>`
         )
       }
@@ -52,7 +53,7 @@ function updateTodo (i, id) {
   })
 }
 
-function deleteTodo (i, id) {
+function deleteTodo (id) {
   if (confirmDelete()) {
     $.ajax({
       type: 'DELETE',
@@ -61,12 +62,13 @@ function deleteTodo (i, id) {
         $('#add-todo').empty()
         for (let i = 0; i < resp.length; i++) {
           let todo = resp[i]
+          let id = todo._id
           $('#add-todo').append(
             `<tr>
               <td>${i + 1}</td>
               <td>${todo.content}</td>
-              <td id="completed-${i + 1}">${todo.completed}</td>
-              <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
+              <td>${todo.completed}</td>
+              <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo('${id}',${todo.completed})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo('${id}')">Delete</button></td>
             </tr>`
           )
         }
@@ -89,12 +91,13 @@ function createTodo () {
       $('input[name=create').val('')
       for (let i = 0; i < resp.length; i++) {
         let todo = resp[i]
+        let id = todo._id
         $('#add-todo').append(
           `<tr>
             <td>${i + 1}</td>
             <td>${todo.content}</td>
-            <td id="completed-${i + 1}">${todo.completed}</td>
-            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
+            <td>${todo.completed}</td>
+            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo('${id}',${todo.completed})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo('${id}')">Delete</button></td>
           </tr>`
         )
       }
