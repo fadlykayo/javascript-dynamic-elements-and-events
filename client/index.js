@@ -1,106 +1,110 @@
 $(document).ready(function () {
-  showMemos()
+  showTodos()
 })
 
-function showMemos() {
+function showTodos () {
   $.ajax({
     type: 'GET',
     url: 'http://localhost:3000/',
-    success: function(resp) {
+    success: function (resp) {
       for (let i = 0; i < resp.length; i++) {
-        let memo = resp[i]
-        $('#add-memo').append(
+        let todo = resp[i]
+        $('#add-todo').append(
           `<tr>
-            <td>${memo.id}</td>
-            <td>${memo.text}</td>
-            <td style="width:50%;"><input style="width:50%; padding:5.5px; border-radius:3px;" type="text" name="input-${i + 1}" placeholder="Edit something.."> <button type="submit" class="btn btn-primary" onclick="updateMemo(${i},${memo.id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteMemo(${i},${memo.id})">Delete</button></td>
+            <td>${i + 1}</td>
+            <td>${todo.content}</td>
+            <td id="completed-${i + 1}">${todo.completed}</td>
+            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
           </tr>`
         )
       }
     },
-    error: function() {
+    error: function () {
       console.log('GET Response Error')
     }
   })
 }
 
-function updateMemo(i, id) {
-  let inputVal = $(`input[name=input-${i + 1}]`).val()
+function updateTodo (i, id) {
+  let checkVal = $(`#completed-${i + 1}`).html()
+  console.log(checkVal)
   $.ajax({
     type: 'PUT',
     url: `http://localhost:3000/update/${id}`,
-    data: {update: inputVal},
-    success: function(resp) {
-      $(`input[name=input-${i + 1}]`).val('')
-      $('#add-memo').empty()
+    data: {update: !checkVal},
+    success: function (resp) {
+      $('#add-todo').empty()
       for (let i = 0; i < resp.length; i++) {
-        let memo = resp[i]
-        $('#add-memo').append(
+        let todo = resp[i]
+        $('#add-todo').append(
           `<tr>
-            <td>${memo.id}</td>
-            <td>${memo.text}</td>
-            <td style="width:50%;"><input style="width:50%; padding:5.5px; border-radius:3px;" type="text" name="input-${i + 1}" placeholder="Edit something.."> <button type="submit" class="btn btn-primary" onclick="updateMemo(${i},${memo.id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteMemo(${i},${memo.id})">Delete</button></td>
+            <td>${i + 1}</td>
+            <td>${todo.content}</td>
+            <td id="completed-${i + 1}">${todo.completed}</td>
+            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
           </tr>`
         )
       }
     },
-    error: function() {
+    error: function () {
       console.log('PUT Response Error')
     }
   })
 }
 
-function deleteMemo(i, id) {
-  if(confirmDelete()) {
+function deleteTodo (i, id) {
+  if (confirmDelete()) {
     $.ajax({
       type: 'DELETE',
       url: `http://localhost:3000/delete/${id}`,
-      success: function(resp) {
-        $('#add-memo').empty()
+      success: function (resp) {
+        $('#add-todo').empty()
         for (let i = 0; i < resp.length; i++) {
-          let memo = resp[i]
-          $('#add-memo').append(
+          let todo = resp[i]
+          $('#add-todo').append(
             `<tr>
-              <td>${memo.id}</td>
-              <td>${memo.text}</td>
-              <td style="width:50%;"><input style="width:50%; padding:5.5px; border-radius:3px;" type="text" name="input-${i + 1}" placeholder="Edit something.."> <button type="submit" class="btn btn-primary" onclick="updateMemo(${i},${memo.id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteMemo(${i},${memo.id})">Delete</button></td>
+              <td>${i + 1}</td>
+              <td>${todo.content}</td>
+              <td id="completed-${i + 1}">${todo.completed}</td>
+              <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
             </tr>`
           )
         }
       },
-      error: function() {
+      error: function () {
         console.log('DELETE Response Error')
       }
     })
   }
 }
 
-function createMemo() {
+function createTodo () {
   let inputVal = $('input[name=create]').val()
-  $('#add-memo').empty()
   $.ajax({
-  type: 'POST',
-  url: 'http://localhost:3000/create',
-  data: {create: inputVal},
-  success: function(resp) {
-    $('input[name=create').val('')
-    for (let i = 0; i < resp.length; i++) {
-      let memo = resp[i]
-      $('#add-memo').append(
-        `<tr>
-          <td>${memo.id}</td>
-          <td>${memo.text}</td>
-          <td style="width:50%;"><input style="width:50%; padding:5.5px; border-radius:3px;" type="text" name="input-${i + 1}" placeholder="Edit something.."> <button type="submit" class="btn btn-primary" onclick="updateMemo(${i},${memo.id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteMemo(${i},${memo.id})">Delete</button></td>
-        </tr>`
-      )
+    type: 'POST',
+    url: 'http://localhost:3000/create',
+    data: {create: inputVal},
+    success: function (resp) {
+      $('#add-todo').empty()
+      $('input[name=create').val('')
+      for (let i = 0; i < resp.length; i++) {
+        let todo = resp[i]
+        $('#add-todo').append(
+          `<tr>
+            <td>${i + 1}</td>
+            <td>${todo.content}</td>
+            <td id="completed-${i + 1}">${todo.completed}</td>
+            <td style="width:50%;"><button type="submit" class="btn btn-primary" onclick="updateTodo(${i},${todo._id})">Update</button> | <button type="submit" class="btn btn-danger" onclick="deleteTodo(${i},${todo._id})">Delete</button></td>
+          </tr>`
+        )
+      }
+    },
+    error: function () {
+      console.log('POST Response Error')
     }
-  },
-  error: function() {
-    console.log('POST Response Error')
-  }
   })
 }
 
-function confirmDelete() {
+function confirmDelete () {
   return confirm('Are you sure?')
 }
